@@ -38,9 +38,9 @@ Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fue
 Los datos son públicos y están disponibles bajo una licencia específica. Se ha respetado esta licencia y no se ha utilizado ninguna información de identificación personal en el análisis.
 
 **Estructura y preparación de los datos**
-**Formato:** Los datos están organizados en formato CSV, con columnas que incluyen identificadores de viaje, tiempos de inicio y fin, estaciones de origen y destino, tipo de bicicleta y tipo de usuario.
-**Limpieza:** Se eliminaron valores nulos y duplicados, y los datos fueron ordenados cronológicamente. También se segmentaron los datos por tipo de usuario para facilitar el análisis.
-**Credibilidad de los datos**
+* **Formato:** Los datos están organizados en formato CSV, con columnas que incluyen identificadores de viaje, tiempos de inicio y fin, estaciones de origen y destino, tipo de bicicleta y tipo de usuario.
+* **Limpieza:** Se eliminaron valores nulos y duplicados, y los datos fueron ordenados cronológicamente. También se segmentaron los datos por tipo de usuario para facilitar el análisis.
+* **Credibilidad de los datos**
 Los datos son considerados confiables ya que provienen de una fuente oficial ampliamente reconocida. Además, se verificó la consistencia de las fechas y duraciones de los viajes, asegurando que los datos representan adecuadamente el comportamiento de los usuarios de bicicletas compartidas.
 
 
