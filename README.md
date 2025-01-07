@@ -32,6 +32,10 @@ Debo hallar diferencias clave entre ambos grupos de ususarios, que puedan ayudar
 
 ## Fuentes de datos
 
+Los datos utilizados en este proyecto fueron proporcionados por [Motivate International Inc.](https://divvy-tripdata.s3.amazonaws.com/index.html) bajo una [licencia pública](https://divvybikes.com/data-license-agreement). Estos datos han sido adaptados para el caso práctico de Cyclistic, una empresa ficticia.
+
+Por favor, revisa la [licencia pública](https://divvybikes.com/data-license-agreement) para conocer los términos y condiciones asociados al uso de los datos.
+
 
 
 
