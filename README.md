@@ -44,7 +44,7 @@ Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fue
 ## Limpieza y manipulación de los datos
 
 **En Excel:**
-* Elimino filas duplicadas y columnas irrelevantes como 'start_lat', 'start_lng', 'end_lat' y 'end_lng'.
+* Elimino filas duplicadas y columnas irrelevantes como ´start_lat´, 'start_lng', 'end_lat' y 'end_lng'.
 
 
 
