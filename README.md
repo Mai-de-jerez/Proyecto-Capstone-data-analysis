@@ -45,6 +45,27 @@ Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fue
 
 **En Excel:**
 * Elimino filas duplicadas y columnas irrelevantes como *start_lat, start_lng, end_lat y end_lng*.
+* Agrego dos nuevas columnas, una para el tiempo de duración del viaje llamada *ride_length*, otra para el día de la semana con números del 1 al 7 llamada *day_of_week*.
+* Elimino todas las filas donde la duración de la columna *ride_length* dure menos de un minuto o más de 24h, me ayudo ordenando la columna en orden ascendente.
+* Compruebo que todas las columnas estén en el formato adecuado, para *ride_length* elijo el formato de hora 37:30:55, que me permite contar diferencia de tiempo en horas pero también en días. Para el resto de columnas uso formato general, y numérico para columnas numéricas.
+* Compruebo que las columnas importantes no contengan celdas vacías.
+* Hago los mismo para las doce hojas correspondientes a cada mes del año.
+**En R:**
+* Desfragmento la columna *started_at* y *ended_at*, cuyo formato era dd/mm/yyyy hh:mm:ss, y saco a raíz de ella las columnas para las horas de inicio y fin del trayecto, otra para el mes del año, otra para el día del mes y otra para el año. Y entonces elimino las dos columnas de fecha originales.
+* Ensamblo todas las hojas en una sola vista.
+* Renombro las columnas de la siguiente manera:
+  - ride_id = trip_id
+  - rideable_type = bikeid 
+  - started_at = start_time, month, day_of_week, ride_length, year, day_of_month
+  - ended_at = end_time, month, day_of_week, ride_length, year, day_of_month
+  - start_station_name = from_station_name 
+  - start_station_id = from_station_id 
+  - end_station_name = to_station_name 
+  - end_station_id = to_station_id 
+  - member_casual = usertype
+
+
+
 
 
 
