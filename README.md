@@ -292,6 +292,21 @@ all_trips_v2 %>%
 ```
 ![Captura de pantalla 2025-01-12 133808](https://github.com/user-attachments/assets/d4df6efb-9186-4739-bfc3-a9f7be1182a9)
 
+* Let's create a visualization for average duration
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(start_time, label = TRUE)) %>% 
+  group_by(usertype, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(usertype, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = usertype)) +
+  geom_col(position = "dodge")
+```
+![Captura de pantalla 2025-01-12 134127](https://github.com/user-attachments/assets/a8976393-c7a4-4b65-a4e0-858dd36d2567)
+
+
+
 
 
 
