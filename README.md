@@ -201,26 +201,27 @@ mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
 median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
 max(all_trips_v2$ride_length) #longest ride
 min(all_trips_v2$ride_length) #shortest ride
-```
+#output:
 mean = 944.5172
 max = 86395.8
 median = 595.8
 min = 60
+```
 
 * You can condense the four lines above to one line using summary() on the specific attribute
 ```{r}
 summary(all_trips_v2$ride_length)
-```
+#output:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   60.0   346.8   595.8   944.5  1048.8 86395.8 
-
+   60.0   346.8   595.8   944.5  1048.8 86395.8
+```
 * Compare members and casual users
 ```{r}
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = mean)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = median)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = max)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = min)
-```
+#output:
 mean:
 1                   casual                   1294.6295
 2                   member                    744.5079
@@ -233,6 +234,7 @@ max:
 median:
 1                   casual                       745.8
 2                   member                       531.0
+```
 * See the average ride time by each day for members vs casual users (Monday=1, Saturday=6)
 ```{r}
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype + all_trips_v2$day_of_week, FUN = mean)
