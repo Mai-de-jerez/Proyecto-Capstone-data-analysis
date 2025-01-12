@@ -41,33 +41,21 @@ Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fue
 
 * Los datos son considerados confiables ya que provienen de una fuente oficial ampliamente reconocida. Además, se verificó la consistencia de las fechas y duraciones de los viajes, asegurando que los datos representan adecuadamente el comportamiento de los usuarios de bicicletas compartidas.
 
-## Limpieza y manipulación de los datos
+## Limpieza y manipulación de los datos en R
 
-**En Excel:**
-* Elimino filas duplicadas y columnas irrelevantes como *start_lat, start_lng, end_lat y end_lng*.
-* Agrego dos nuevas columnas, una para el tiempo de duración del viaje llamada *ride_length*, otra para el día de la semana con números del 1 al 7 llamada *day_of_week*.
-* Elimino todas las filas donde la duración de la columna *ride_length* dure menos de un minuto o más de 24h, me ayudo ordenando la columna en orden ascendente.
-* Compruebo que todas las columnas estén en el formato adecuado, para *ride_length* elijo el formato de hora 37:30:55, que me permite contar diferencia de tiempo en horas pero también en días. Para el resto de columnas uso formato general, y numérico para columnas numéricas.
-* Compruebo que las columnas importantes no contengan celdas vacías.
-* Hago los mismo para las doce hojas correspondientes a cada mes del año.
-
-  
-**En R:**
-
+* Install required packages
+* tidyverse for data import and wrangling
+* lubridate for date functions
+* ggplot for visualization
 ```{r}
-# Install required packages
-# tidyverse for data import and wrangling
-# lubridate for date functions
-# ggplot for visualization
 library(tidyverse)  #helps wrangle data
 library(lubridate)  #helps wrangle date attributes
 library(ggplot2)  #helps visualize data
 getwd() #displays your working directory
 setwd("/Users/carme/Desktop/Datos_Divvy/CSV") #sets your working directory to simplify calls to data ... make sure to use your OWN username instead of mine ;)
-
 ```
+* Upload Divvy datasets (csv files) here
 ```{r}
-# Upload Divvy datasets (csv files) here
 enero <- read_csv("202401-divvy-tripdata.csv")
 febrero <- read_csv("202402-divvy-tripdata.csv")
 marzo <- read_csv("202403-divvy-tripdata.csv")
@@ -81,9 +69,9 @@ octubre <- read_csv("202410-divvy-tripdata.csv")
 noviembre <- read_csv("202411-divvy-tripdata.csv")
 diciembre <- read_csv("202412-divvy-tripdata.csv")
 ```
+* Compare column names each of the files
+* While the names don't have to be in the same order, they DO need to match perfectly before we can use a command to join them into one file
 ```{r}
-# Compare column names each of the files
-# While the names don't have to be in the same order, they DO need to match perfectly before we can use a command to join them into one file
 colnames(enero)
 colnames(febrero)
 colnames(marzo)
@@ -97,8 +85,8 @@ colnames(octubre)
 colnames(noviembre)
 colnames(diciembre)
 ```
+* Rename columns  to make them consistent with q1_2020 (as this will be the supposed going-forward table design for Divvy)
 ```{r}
-# Rename columns  to make them consistent with q1_2020 (as this will be the supposed going-forward table design for Divvy)
 
 (enero <- rename(enero
                    ,ride_id = trip_id
@@ -134,9 +122,88 @@ colnames(diciembre)
 #etc
 ...
 ```
+* Inspect the dataframes and look for incongruencies
+```{r}
+
+str(enero)
+str(febrero)
+str(marzo)
+...
+```
+* Convert ride_id and rideable_type to character so that they can stack correctly
+```{r}
+enero <-  mutate(enero, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+febrero <-  mutate(febrero, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+marzo <-  mutate(marzo, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type))
+...
+```
+* Stack individual quarter's data frames into one big data frame
+```{r}
+all_trips <- bind_rows(enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre)
+```
+* Inspect the new table that has been created
+```{r}
+colnames(all_trips)  #List of column names
+nrow(all_trips)  #How many rows are in data frame?
+dim(all_trips)  #Dimensions of the data frame?
+head(all_trips)  #See the first 6 rows of data frame.  Also tail(all_trips)
+str(all_trips)  #See list of columns and data types (numeric, character, etc)
+summary(all_trips)  #Statistical summary of data. Mainly for numerics
+```
+* Remove irrelevant columns.
+```{r}
+all_trips <- all_trips[, !(names(all_trips) %in% c("start_lat", "start_lng", "end_lat", "end_lng"))]
+```
+* Remove duplicate rows
+```{r}
+all_trips <- unique(all_trips)
+```
+
+There are a few problems we will need to fix:
+* The data can only be aggregated at the ride-level, which is too granular. We will want to add some additional columns of data -- such as day_of_month, month, year -- that provide additional opportunities to aggregate the data.
+* We will want to add a calculated field for length of ride since the 2020Q1 data did not have the "tripduration" column. We will add "ride_length" to the entire dataframe for consistency.
+*There are some rides where tripduration shows up as negative, including several hundred rides where Divvy took bikes out of circulation for Quality Control reasons. We will want to delete these rides.
+* Add columns that list the date, month, day, and year of each ride
+* This will allow us to aggregate ride data for each month, day, or year ... before completing these operations we could only aggregate at the ride level
+```{r}
+all_trips$date <- as.Date(all_trips$started_at) #The default format is yyyy-mm-dd
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day_of_month <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+```
+* Add a "ride_length" calculation to all_trips (in seconds)
+```{r}
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+```
+
+* Inspect the structure of the columns
+```{r}
+str(all_trips)
+```
+* Convert "ride_length" from Factor to numeric so we can run calculations on the data
+```{r}
+is.factor(all_trips$ride_length)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+is.numeric(all_trips$ride_length)
+```
+* Remove "bad" data
+* The dataframe includes a few hundred entries when bikes were taken out of docks and checked for quality by Divvy or ride_length was negative
+* We will create a new version of the dataframe (v2) since data is being removed
+```{r}
+all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0),]
+```
 
 
-* Ensamblo todas las hojas en una sola vista.
+
+
+
+
+
+
 
 
 
