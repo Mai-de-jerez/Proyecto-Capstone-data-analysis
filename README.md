@@ -305,6 +305,42 @@ all_trips_v2 %>%
 ```
 ![Captura de pantalla 2025-01-12 134127](https://github.com/user-attachments/assets/a8976393-c7a4-4b65-a4e0-858dd36d2567)
 
+* Let's create a visualization for bike type.
+```{r}
+# Filter and count the bikes for 'member'
+member_bikes <- all_trips_v2 %>%
+  filter(usertype == "member") %>%
+  count(bikeid)
+
+# Filter and count the bikes for 'casual'
+casual_bikes <- all_trips_v2 %>%
+  filter(usertype == "casual") %>%
+  count(bikeid)
+
+# Plot the pie chart for 'member'
+ggplot(member_bikes, aes(x = "", y = n, fill = bikeid)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  theme_void() + 
+  labs(title = "Types of bikes used by members") +
+  scale_fill_brewer(palette = "Set3")  # You can choose the color palette
+
+# Plot the pie chart for 'casual'
+ggplot(casual_bikes, aes(x = "", y = n, fill = bikeid)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  theme_void() + 
+  labs(title = "Types of bikes used by casual riders") +
+  scale_fill_brewer(palette = "Set3")  # You can choose the color palette
+```
+![Captura de pantalla 2025-01-12 224040](https://github.com/user-attachments/assets/1d543531-6608-4511-9d5e-b0a81f5685e1)
+![Captura de pantalla 2025-01-12 223951](https://github.com/user-attachments/assets/c3fe7b8a-9fc6-4f08-b971-b0424c91fd2b)
+
+
+
+
+
+
 
 
 
