@@ -238,7 +238,7 @@ median:
 * See the average ride time by each day for members vs casual users (Monday=1, Saturday=6)
 ```{r}
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype + all_trips_v2$day_of_week, FUN = mean)
-```
+#output:
    datos_completos$usertype datos_completos$day_of_week datos_completos$ride_length
 1                    casual                           1                   1250.0529
 2                    member                           1                    710.8880
@@ -254,7 +254,7 @@ aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype + all_trips_v2$day_of
 12                   member                           6                    829.4649
 13                   casual                           7                   1497.7597
 14                   member                           7                    828.8304
-
+```
 * analyze ridership data by type and weekday
 ```{r}
 all_trips_v2 %>% 
@@ -263,7 +263,7 @@ all_trips_v2 %>%
   summarise(number_of_rides = n()							#calculates the number of rides and average duration 
   ,average_duration = mean(ride_length)) %>% 		# calculates the average duration
   arrange(usertype, weekday)
-```
+#output:
  usertype weekday number_of_rides average_duration
    <chr>    <ord>             <int>            <dbl>
    casual   "do\\."          356855            1498.
@@ -280,7 +280,7 @@ all_trips_v2 %>%
    member   "ju\\."          560867             713.
    member   "vi\\."          516147             727.
    member   "sá\\."          469482             829.
-
+```
 * Let's visualize the number of rides by rider type
 ```{r}
 all_trips_v2 %>% 
