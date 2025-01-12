@@ -1,47 +1,45 @@
 # Proyecto-Capstone-data-analysis
-## Introducción
-Bienvenido al caso práctico del análisis de bicicletas compartidas Cyclistic. En este caso práctico, realizaré muchas tareas del mundo real, típicas de un analista de datos júnior. Trabajaré para una empresa ficticia llamada Cyclistic y conoceré a diferentes personajes y miembros del equipo. Para responder a las preguntas clave de la empresa, seguiré los pasos del proceso de análisis de datos: 
-* Preguntar.
-* Preparar.
-* Procesar.
-* Analizar.
-* Compartir.
-* Actuar.
+## Introduction
+Welcome to the Cyclistic shared bike analysis case study. In this case study, I will be performing many real-world tasks typical of a junior data analyst. I will be working for a fictional company called Cyclistic and meeting different characters and team members. To answer the company's key questions, I will follow the steps of the data analysis process:
+* Ask.
+* Prepare.
+* Process.
+* Analyze.
+* Share.
+* Act.
+## Scenario
+I am a junior data analyst working on the marketing analytics team at Cyclistic, a bike-sharing company in Chicago. The marketing director believes that the company's future success depends on maximizing the number of annual memberships. Therefore, my team wants to understand the differences in the usage of Cyclistic bikes between casual riders and annual members. Through these insights, my team will design a new marketing strategy to convert casual riders into annual members. However, before that, Cyclistic executives must approve my recommendations, so I must back up my proposal with compelling data insights and professional visualizations of the data.
 
-## Escenario
-Soy una analista de datos júnior que trabaja en el equipo de analistas de marketing de Cyclistic, una empresa de bicicletas compartidas de Chicago. La directora de marketing cree que el éxito futuro de la empresa depende de maximizar la cantidad de membresías anuales. Por lo tanto, mi equipo quiere entender qué diferencias existen en el uso de las bicicletas Cyclistic entre los ciclistas ocasionales y los miembros anuales. A través de estos conocimientos, mi equipo diseñará una nueva estrategia de marketing para convertir a los ciclistas ocasionales en miembros anuales. Sin embargo, antes de eso, los ejecutivos de Cyclistic deben aprobar mis recomendaciones; por eso, debo respaldar mi propuesta con una visión convincente de los datos y visualizaciones profesionales de los mismos.
+## Characters and Teams
+* **Cyclistic:** A bike-sharing program that includes 5,800 bikes and 600 stations. Cyclistic is notable for also offering recumbent bikes, hand tricycles, and cargo bikes, providing a more inclusive use of shared bikes for people with disabilities and cyclists who cannot use a standard two-wheel bike. Most cyclists choose traditional bikes, with about 8% of cyclists using assisted options. Cyclistic users are more likely to use bikes for recreation, but around 30% use them to commute to work every day.
+* **Lily Moreno:** The marketing director and your manager. Moreno is responsible for developing campaigns and initiatives to promote the bike-sharing program. Campaigns may include email, social media, and other channels.
+* **Cyclistic Marketing Data Analytics Team:** A team of data analysts responsible for collecting, analyzing, and reporting data that helps drive Cyclistic's marketing strategy. You joined this team six months ago and have focused not only on understanding Cyclistic's mission and business goals but also on figuring out how you can help Cyclistic achieve them from your position as a junior data analyst.
+* **Cyclistic Executive Team:** The highly detail-oriented executive team will decide whether to approve the recommended marketing program.
 
-## Personajes y equipos
-* **Cyclistic:** Un programa de bicicletas compartidas que incluye 5,800 bicicletas y 600 estaciones. Cyclistic se destaca por ofrecer también bicicletas reclinadas, triciclos manuales y bicicletas de carga que ofrecen un uso más inclusivo de las bicicletas compartidas para las personas con discapacidad y los ciclistas que no pueden utilizar una bicicleta estándar de dos ruedas. La mayoría de los ciclistas eligen las bicicletas tradicionales, alrededor de un 8% de los ciclistas usan las opciones asistidas. Los usuarios de Cyclistic son más propensos a utilizar la bicicleta para recreación, pero alrededor del 30% la utiliza para ir al trabajo cada día.
-*	**Lily Moreno:** La directora de marketing y tu gerente. Moreno es responsable del desarrollo de campañas e iniciativas para promover el programa de bicicletas compartidas. Las campañas pueden incluir correo electrónico, redes sociales y otros canales.
-*	**Equipo de análisis computacional de datos de marketing de Cyclistic:** Un equipo de analistas de datos que se encargan de recopilar, analizar e informar datos que ayudan a conducir la estrategia de marketing de Cyclistic. Te incorporaste a este equipo hace seis meses y te has dedicado no solo a conocer la misión y las metas de negocios de Cyclistic, sino también a ver cómo puedes ayudar a Cyclistic a lograrlo, desde tu posición de analista de datos júnior.
-*	**Equipo ejecutivo de Cyclistic:** El equipo ejecutivo, sumamente detallista, decidirá si aprueba el programa de marketing recomendado.
+## About the Company
+In 2016, Cyclistic launched a successful bike-sharing program. Since then, the program has grown to a fleet of 5,824 GPS-enabled bikes locked in a network of 692 stations across Chicago. Bikes can be unlocked at one station and returned to any other station in the system at any time.
 
-## Acerca de la empresa
-En 2016, Cyclistic lanzó una exitosa oferta de bicicletas compartidas. Desde entonces, el programa creció hasta alcanzar una flota de 5,824 bicicletas georreferenciadas y bloqueadas en una red de 692 estaciones en toda Chicago. Las bicicletas se pueden desbloquear desde una estación y devolverse en cualquier otra estación del sistema en cualquier momento.
+So far, Cyclistic's marketing strategy has been focused on building general brand awareness and attracting large consumer segments. One of the approaches that helped make this possible was the flexibility of its pricing plans: single ride passes, full-day passes, and annual memberships. Customers who buy single ride or full-day passes are called casual riders. Customers who buy annual memberships are called Cyclistic members.
 
-Hasta ahora, la estrategia de marketing de Cyclistic se basaba en la construcción de un reconocimiento de marca general y en atraer a amplios segmentos de consumidores. Uno de los enfoques que ayudó a hacer esto posible fue la flexibilidad de sus planes de precios: pases de un solo viaje, pases de un día completo y membresías anuales. A los clientes que compran pases de un solo viaje o pases de un día completo se los llama ciclistas ocasionales. Los clientes que compran membresías anuales se llaman miembros de Cyclistic.
+Cyclistic's financial analysts concluded that annual members are much more profitable than casual riders. Although the flexible pricing helps Cyclistic attract more customers, Moreno believes that maximizing the number of annual members will be key to future growth. Instead of creating a marketing campaign targeting all new customers, Moreno believes there are many opportunities to convert casual riders into members. She points out that casual riders are already familiar with the Cyclistic program and have chosen Cyclistic for their mobility needs.
 
-Los analistas financieros de Cyclistic llegaron a la conclusión de que los miembros anuales son mucho más rentables que los ciclistas ocasionales. Aunque la flexibilidad de precios ayuda a Cyclistic a atraer más clientes, Moreno cree que maximizar el número de miembros anuales será clave para el crecimiento futuro. En lugar de crear una campaña de marketing que apunte a todos los clientes nuevos, Moreno cree que hay muchas posibilidades de convertir a los ciclistas ocasionales en miembros. Ella señala que los ciclistas ocasionales ya conocen el programa de Cyclistic y han elegido a Cyclistic para sus necesidades de movilidad.
+Moreno set a clear goal: Design marketing strategies aimed at converting casual riders into annual members. However, to do that, the marketing analytics team needs to better understand how annual members and casual riders differ, why casual riders would purchase a membership, and how digital media could impact their marketing tactics. Moreno and her team are interested in analyzing Cyclistic's historical bike trip data to identify trends.
 
-Moreno estableció una meta clara: Diseñar estrategias de marketing orientadas a convertir a los ciclistas ocasionales en miembros anuales. Sin embargo, para hacer eso, el equipo de analistas de marketing necesita entender mejor cómo difieren los miembros anuales y los ciclistas ocasionales, por qué los ciclistas ocasionales comprarían una membresía y cómo los medios digitales podrían afectar sus tácticas de marketing. Moreno y su equipo están interesados en analizar los datos históricos de viajes en bicicleta de Cyclistic para identificar tendencias.
+## Business Task
+Moreno assigned me this question: What are the differences between annual members and casual riders in terms of their use of Cyclistic bikes?
+I need to identify key differences between the two user groups that can help determine how to encourage casual riders to become members, and how digital media could impact Cyclistic's marketing tactics.
 
-## Tarea empresarial
-Moreno me asignó esta pregunta: ¿En qué se diferencian los socios anuales y los ciclistas ocasionales con respecto al uso de las bicicletas de Cyclistic?
-Debo hallar diferencias clave entre ambos grupos de ususarios, que puedan ayudar a averiguar como hacer que los ciclistas ocasionales prefieran hacerse miembros, y como los medios digitales podrían afectar a las tácticas de marketing de Cyclistic.
+## Data sources
 
-## Fuentes de datos
+* The data used in this project was provided by [Motivate International Inc.](https://divvy-tripdata.s3.amazonaws.com/index.html) under a [public license](https://divvybikes.com/data-license-agreement). This data has been adapted for the Cyclistic case study, a fictional company. The historical bike trip data covers the past 12 months and was downloaded in CSV format from the provided official site, with each file representing a month. The datasets include detailed information about the trips, such as start and end times, duration, type of bike used (classic or electric), and user type (member or casual rider).
 
-Los datos utilizados en este proyecto fueron proporcionados por [Motivate International Inc.](https://divvy-tripdata.s3.amazonaws.com/index.html) bajo una [licencia pública](https://divvybikes.com/data-license-agreement). Estos datos han sido adaptados para el caso práctico de Cyclistic, una empresa ficticia.
-Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fueron descargados en formato CSV desde el sitio oficial proporcionado, con cada archivo representando un mes. Los conjuntos de datos incluyen información detallada sobre los viajes, como la hora de inicio y fin, la duración, el tipo de bicicleta utilizada (clásica o eléctrica) y el tipo de usuario (miembro o usuario ocasional).
+* The data is public and available under a specific license. This license has been respected, and no personally identifiable information has been used in the analysis.
 
-* Los datos son públicos y están disponibles bajo una licencia específica. Se ha respetado esta licencia y no se ha utilizado ninguna información de identificación personal en el análisis.
+* The data is organized in CSV format, with columns that include trip identifiers, start and end times, origin and destination stations, bike type, and user type.
 
-* Los datos están organizados en formato CSV, con columnas que incluyen identificadores de viaje, tiempos de inicio y fin, estaciones de origen y destino, tipo de bicicleta y tipo de usuario.
+* The data is considered reliable since it comes from a widely recognized official source. Additionally, the consistency of trip dates and durations has been verified, ensuring that the data accurately represents the behavior of shared bike users.
 
-* Los datos son considerados confiables ya que provienen de una fuente oficial ampliamente reconocida. Además, se verificó la consistencia de las fechas y duraciones de los viajes, asegurando que los datos representan adecuadamente el comportamiento de los usuarios de bicicletas compartidas.
-
-## Limpieza y manipulación de los datos en R
+## Data cleaning and manipulation in R.
 
 * Install required packages
 * tidyverse for data import and wrangling
