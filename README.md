@@ -194,8 +194,101 @@ is.numeric(all_trips$ride_length)
 ```{r}
 all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0),]
 ```
+## Exploratory data analysis.
+* Descriptive analysis on ride_length (all figures in seconds)
+```{r}
+mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
+median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
+max(all_trips_v2$ride_length) #longest ride
+min(all_trips_v2$ride_length) #shortest ride
+```
+mean = 944.5172
+max = 86395.8
+median = 595.8
+min = 60
 
+* You can condense the four lines above to one line using summary() on the specific attribute
+```{r}
+summary(all_trips_v2$ride_length)
+```
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   60.0   346.8   595.8   944.5  1048.8 86395.8 
 
+* Compare members and casual users
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = mean)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = median)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = max)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = min)
+```
+mean:
+1                   casual                   1294.6295
+2                   member                    744.5079
+min:
+1                   casual                          60
+2                   member                          60
+max:
+1                   casual                     86395.8
+2                   member                     86395.2
+median:
+1                   casual                       745.8
+2                   member                       531.0
+* See the average ride time by each day for members vs casual users (Monday=1, Saturday=6)
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype + all_trips_v2$day_of_week, FUN = mean)
+```
+   datos_completos$usertype datos_completos$day_of_week datos_completos$ride_length
+1                    casual                           1                   1250.0529
+2                    member                           1                    710.8880
+3                    casual                           2                   1109.0977
+4                    member                           2                    712.3212
+5                    casual                           3                   1143.2722
+6                    member                           3                    725.2189
+7                    casual                           4                   1122.5208
+8                    member                           4                    712.6838
+9                    casual                           5                   1247.5697
+10                   member                           5                    726.6227
+11                   casual                           6                   1476.9349
+12                   member                           6                    829.4649
+13                   casual                           7                   1497.7597
+14                   member                           7                    828.8304
+
+* analyze ridership data by type and weekday
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(start_time, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(usertype, weekday) %>%  #groups by usertype and weekday
+  summarise(number_of_rides = n()							#calculates the number of rides and average duration 
+  ,average_duration = mean(ride_length)) %>% 		# calculates the average duration
+  arrange(usertype, weekday)
+```
+ usertype weekday number_of_rides average_duration
+   <chr>    <ord>             <int>            <dbl>
+   casual   "do\\."          356855            1498.
+   casual   "lu\\."          245890            1250.
+   casual   "ma\\."          225488            1109.
+   casual   "mi\\."          260771            1143.
+   casual   "ju\\."          256500            1123.
+   casual   "vi\\."          305238            1248.
+   casual   "sá\\."          429433            1477.
+   member   "do\\."          408908             829.
+   member   "lu\\."          525615             711.
+   member   "ma\\."          560843             712.
+   member   "mi\\."          599442             725.
+   member   "ju\\."          560867             713.
+   member   "vi\\."          516147             727.
+   member   "sá\\."          469482             829.
+
+* Let's visualize the number of rides by rider type
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge")
+```
+![Captura de pantalla 2025-01-12 133808](https://github.com/user-attachments/assets/d4df6efb-9186-4739-bfc3-a9f7be1182a9)
 
 
 
