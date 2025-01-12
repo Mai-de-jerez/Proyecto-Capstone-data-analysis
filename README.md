@@ -50,6 +50,8 @@ Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fue
 * Compruebo que todas las columnas estén en el formato adecuado, para *ride_length* elijo el formato de hora 37:30:55, que me permite contar diferencia de tiempo en horas pero también en días. Para el resto de columnas uso formato general, y numérico para columnas numéricas.
 * Compruebo que las columnas importantes no contengan celdas vacías.
 * Hago los mismo para las doce hojas correspondientes a cada mes del año.
+![image](https://github.com/user-attachments/assets/80b3b84c-ab5e-446a-8817-ff5c659d4935)
+
   
 **En R:**
 * Desfragmento la columna *started_at* y *ended_at*, cuyo formato era dd/mm/yyyy hh:mm:ss, y saco a raíz de ella las columnas para las horas de inicio y fin del trayecto, otra para el mes del año, otra para el día del mes y otra para el año. Y entonces elimino las dos columnas de fecha originales.
