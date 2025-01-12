@@ -53,24 +53,91 @@ Los datos históricos de viajes en bicicleta cubren los últimos 12 meses, y fue
 
   
 **En R:**
-* Desfragmento la columna *started_at* y *ended_at*, cuyo formato era dd/mm/yyyy hh:mm:ss, y saco a raíz de ella las columnas para el mes del año, otra para el día del mes y otra para el año.
 
 ```{r}
-# Cargar un paquete
-library(ggplot2)
+# Install required packages
+# tidyverse for data import and wrangling
+# lubridate for date functions
+# ggplot for visualization
+library(tidyverse)  #helps wrangle data
+library(lubridate)  #helps wrangle date attributes
+library(ggplot2)  #helps visualize data
+getwd() #displays your working directory
+setwd("/Users/carme/Desktop/Datos_Divvy/CSV") #sets your working directory to simplify calls to data ... make sure to use your OWN username instead of mine ;)
+
+```
+```{r}
+# Upload Divvy datasets (csv files) here
+enero <- read_csv("202401-divvy-tripdata.csv")
+febrero <- read_csv("202402-divvy-tripdata.csv")
+marzo <- read_csv("202403-divvy-tripdata.csv")
+abril <- read_csv("202404-divvy-tripdata.csv")
+mayo <- read_csv("202405-divvy-tripdata.csv")
+junio <- read_csv("202406-divvy-tripdata.csv")
+julio <- read_csv("202407-divvy-tripdata.csv")
+agosto <- read_csv("202408-divvy-tripdata.csv")
+septiembre <- read_csv("202409-divvy-tripdata.csv")
+octubre <- read_csv("202410-divvy-tripdata.csv")
+noviembre <- read_csv("202411-divvy-tripdata.csv")
+diciembre <- read_csv("202412-divvy-tripdata.csv")
+```
+```{r}
+# Compare column names each of the files
+# While the names don't have to be in the same order, they DO need to match perfectly before we can use a command to join them into one file
+colnames(enero)
+colnames(febrero)
+colnames(marzo)
+colnames(abril)
+colnames(mayo)
+colnames(junio)
+colnames(julio)
+colnames(agosto)
+colnames(septiembre)
+colnames(octubre)
+colnames(noviembre)
+colnames(diciembre)
+```
+```{r}
+# Rename columns  to make them consistent with q1_2020 (as this will be the supposed going-forward table design for Divvy)
+
+(enero <- rename(enero
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = start_time  
+                   ,ended_at = end_time  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+(febrero <- rename(febrero
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = start_time  
+                   ,ended_at = end_time  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+(marzo <- rename(marzo
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = start_time  
+                   ,ended_at = end_time  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+#etc
+...
 ```
 
+
 * Ensamblo todas las hojas en una sola vista.
-* Renombro las columnas de la siguiente manera:
-  - ride_id = trip_id
-  - rideable_type = bikeid 
-  - started_at = start_time, month, day_of_week, ride_length, year, day_of_month
-  - ended_at = end_time, month, day_of_week, ride_length, year, day_of_month
-  - start_station_name = from_station_name 
-  - start_station_id = from_station_id 
-  - end_station_name = to_station_name 
-  - end_station_id = to_station_id 
-  - member_casual = usertype
+
 
 
 
