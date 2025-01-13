@@ -336,11 +336,78 @@ ggplot(casual_bikes, aes(x = "", y = n, fill = bikeid)) +
 ![Captura de pantalla 2025-01-12 224040](https://github.com/user-attachments/assets/1d543531-6608-4511-9d5e-b0a81f5685e1)
 ![Captura de pantalla 2025-01-12 223951](https://github.com/user-attachments/assets/c3fe7b8a-9fc6-4f08-b971-b0424c91fd2b)
 
+*Podemos crear visualizaciones para ver el numero de viajes en funcion de la hora
+```{r}
+# Extraer la hora del día
+datos_completos$hora <- hour(datos_completos$start_time)
 
+# Agrupar por hora y tipo de usuario, y contar el número de viajes
+resumen_data <- datos_completos %>%
+  group_by(hora, usertype) %>%
+  summarise(num_viajes = n_distinct(trip_id)) # Contamos los viajes únicos por hora
 
+ggplot(resumen_data, aes(x = hora, y = num_viajes, color = usertype)) +
+  geom_line(size = 1) +  # Línea para cada tipo de usuario
+  labs(title = "Número de viajes según la hora del día",
+       x = "Hora del día",
+       y = "Número de viajes",
+       color = "Tipo de usuario") +
+  theme_minimal() +  # Estilo limpio
+  scale_x_continuous(breaks = 0:23, 
+                     labels = paste0(sprintf("%02d", 0:23), ":00")) +  # Formato HH:00
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar las etiquetas del eje X
+```
+![Captura de pantalla 2025-01-13 024211](https://github.com/user-attachments/assets/38d8654e-c0ed-41a4-a80e-240a4eb0d02a)
 
+* Podemos ver el número de viajes por dia semanal
+```{r}
+# Convertir los números del 1 al 7 a los nombres de los días de la semana
+datos_completos$day_of_week <- factor(datos_completos$day_of_week,
+                                      levels = 1:7,
+                                      labels = c("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"))
 
+# Agrupar por día de la semana y tipo de usuario, y contar el número de viajes
+resumen_dia_semana <- datos_completos %>%
+  group_by(day_of_week, usertype) %>%
+  summarise(num_viajes = n_distinct(trip_id))  # Contamos los viajes únicos por día
 
+# Crear la gráfica de barras
+ggplot(resumen_dia_semana, aes(x = day_of_week, y = num_viajes, fill = usertype)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Barras por cada tipo de usuario
+  labs(title = "Número de viajes según el día de la semana",
+       x = "Día de la semana",
+       y = "Número de viajes",
+       fill = "Tipo de usuario") +
+  theme_minimal() +  # Estilo limpio
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje X
+```
+![Captura de pantalla 2025-01-13 024609](https://github.com/user-attachments/assets/862c2576-76cf-4cbb-997d-66a637c432f8)
+
+*Podemos ver el numero de viajes por mes
+```{r}
+# Convertir los números del 1 al 12 a los nombres de los meses
+datos_completos$month <- factor(datos_completos$month,
+                                levels = 1:12,
+                                labels = c("enero", "febrero", "marzo", "abril", "mayo", "junio", 
+                                           "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"))
+
+# Agrupar por mes y tipo de usuario, y contar el número de viajes
+resumen_mes <- datos_completos %>%
+  group_by(month, usertype) %>%
+  summarise(num_viajes = n_distinct(trip_id))  # Contamos los viajes únicos por mes
+
+# Crear la gráfica de barras
+ggplot(resumen_mes, aes(x = month, y = num_viajes, fill = usertype)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Barras por cada tipo de usuario
+  labs(title = "Número de viajes según el mes del año",
+       x = "Mes",
+       y = "Número de viajes",
+       fill = "Tipo de usuario") +
+  theme_minimal() +  # Estilo limpio
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje X
+```
+
+![Captura de pantalla 2025-01-13 025027](https://github.com/user-attachments/assets/2f3c4ebf-f5c0-4d1e-b23a-23a6ade47346)
 
 
 
