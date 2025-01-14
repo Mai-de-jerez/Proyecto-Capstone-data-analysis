@@ -39,241 +39,25 @@ I need to identify key differences between the two user groups that can help det
 
 * The data is considered reliable since it comes from a widely recognized official source. Additionally, the consistency of trip dates and durations has been verified, ensuring that the data accurately represents the behavior of shared bike users.
 
-## Data cleaning and manipulation in R.
+## Data cleaning and manipulation in R
+
+1. Load the CSV files into R and merge them into a single data frame.
+2. Delete the columns start_lat, start_lng, end_lat and end_lng, because they seem irrelevant to me.
+3. Convert the started_at column to "Date".
+4. Create new columns for the year (year), the month (month), the day of the week (day_of_week) and the day of the month (day).
+5. Create a column called ride_length to measure the duration of the ride in seconds.
+6. Convert the ride_length column to a numeric data type.
+7. Remove duplicate rows from the data frame.
+8. Create a new data frame that does not include trips shorter than 60sec.
+9. Change the values ​​of the Month column so that it contains month names instead of numbers.
+
+## Data Analysis in R
 
 
 
 
 
-```{r}
-str(all_trips)
-```
-* Convert "ride_length" from Factor to numeric so we can run calculations on the data
-```{r}
-is.factor(all_trips$ride_length)
-all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
-is.numeric(all_trips$ride_length)
-```
-* Remove "bad" data
-* The dataframe includes a few hundred entries when bikes were taken out of docks and checked for quality by Divvy or ride_length was negative
-* We will create a new version of the dataframe (v2) since data is being removed
-```{r}
-all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0),]
-```
-## Exploratory data analysis.
-* Descriptive analysis on ride_length (all figures in seconds)
-```{r}
-mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
-median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
-max(all_trips_v2$ride_length) #longest ride
-min(all_trips_v2$ride_length) #shortest ride
-#output:
-mean = 944.5172
-max = 86395.8
-median = 595.8
-min = 60
-```
 
-* You can condense the four lines above to one line using summary() on the specific attribute
-```{r}
-summary(all_trips_v2$ride_length)
-#output:
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   60.0   346.8   595.8   944.5  1048.8 86395.8
-```
-* Compare members and casual users
-```{r}
-aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = mean)
-aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = median)
-aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = max)
-aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype, FUN = min)
-#output:
-mean:
-1                   casual                   1294.6295
-2                   member                    744.5079
-min:
-1                   casual                          60
-2                   member                          60
-max:
-1                   casual                     86395.8
-2                   member                     86395.2
-median:
-1                   casual                       745.8
-2                   member                       531.0
-```
-* See the average ride time by each day for members vs casual users (Monday=1, Saturday=6)
-```{r}
-aggregate(all_trips_v2$ride_length ~ all_trips_v2$usertype + all_trips_v2$day_of_week, FUN = mean)
-#output:
-   datos_completos$usertype datos_completos$day_of_week datos_completos$ride_length
-1                    casual                           1                   1250.0529
-2                    member                           1                    710.8880
-3                    casual                           2                   1109.0977
-4                    member                           2                    712.3212
-5                    casual                           3                   1143.2722
-6                    member                           3                    725.2189
-7                    casual                           4                   1122.5208
-8                    member                           4                    712.6838
-9                    casual                           5                   1247.5697
-10                   member                           5                    726.6227
-11                   casual                           6                   1476.9349
-12                   member                           6                    829.4649
-13                   casual                           7                   1497.7597
-14                   member                           7                    828.8304
-```
-* analyze ridership data by type and weekday
-```{r}
-all_trips_v2 %>% 
-  mutate(weekday = wday(start_time, label = TRUE)) %>%  #creates weekday field using wday()
-  group_by(usertype, weekday) %>%  #groups by usertype and weekday
-  summarise(number_of_rides = n()							#calculates the number of rides and average duration 
-  ,average_duration = mean(ride_length)) %>% 		# calculates the average duration
-  arrange(usertype, weekday)
-#output:
- usertype weekday number_of_rides average_duration
-   <chr>    <ord>             <int>            <dbl>
-   casual   "do\\."          356855            1498.
-   casual   "lu\\."          245890            1250.
-   casual   "ma\\."          225488            1109.
-   casual   "mi\\."          260771            1143.
-   casual   "ju\\."          256500            1123.
-   casual   "vi\\."          305238            1248.
-   casual   "sá\\."          429433            1477.
-   member   "do\\."          408908             829.
-   member   "lu\\."          525615             711.
-   member   "ma\\."          560843             712.
-   member   "mi\\."          599442             725.
-   member   "ju\\."          560867             713.
-   member   "vi\\."          516147             727.
-   member   "sá\\."          469482             829.
-```
-* Let's visualize the number of rides by rider type
-```{r}
-all_trips_v2 %>% 
-  mutate(weekday = wday(started_at, label = TRUE)) %>% 
-  group_by(member_casual, weekday) %>% 
-  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>% 
-  arrange(member_casual, weekday)  %>% 
-  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge")
-```
-![Captura de pantalla 2025-01-12 133808](https://github.com/user-attachments/assets/d4df6efb-9186-4739-bfc3-a9f7be1182a9)
-
-* Let's create a visualization for average duration
-```{r}
-all_trips_v2 %>% 
-  mutate(weekday = wday(start_time, label = TRUE)) %>% 
-  group_by(usertype, weekday) %>% 
-  summarise(number_of_rides = n()
-            ,average_duration = mean(ride_length)) %>% 
-  arrange(usertype, weekday)  %>% 
-  ggplot(aes(x = weekday, y = average_duration, fill = usertype)) +
-  geom_col(position = "dodge")
-```
-![Captura de pantalla 2025-01-12 134127](https://github.com/user-attachments/assets/a8976393-c7a4-4b65-a4e0-858dd36d2567)
-
-* Let's create a visualization for bike type.
-```{r}
-# Filter and count the bikes for 'member'
-member_bikes <- all_trips_v2 %>%
-  filter(usertype == "member") %>%
-  count(bikeid)
-
-# Filter and count the bikes for 'casual'
-casual_bikes <- all_trips_v2 %>%
-  filter(usertype == "casual") %>%
-  count(bikeid)
-
-# Plot the pie chart for 'member'
-ggplot(member_bikes, aes(x = "", y = n, fill = bikeid)) +
-  geom_bar(stat = "identity", width = 1) +
-  coord_polar(theta = "y") +
-  theme_void() + 
-  labs(title = "Types of bikes used by members") +
-  scale_fill_brewer(palette = "Set3")  # You can choose the color palette
-
-# Plot the pie chart for 'casual'
-ggplot(casual_bikes, aes(x = "", y = n, fill = bikeid)) +
-  geom_bar(stat = "identity", width = 1) +
-  coord_polar(theta = "y") +
-  theme_void() + 
-  labs(title = "Types of bikes used by casual riders") +
-  scale_fill_brewer(palette = "Set3")  # You can choose the color palette
-```
-![Captura de pantalla 2025-01-12 224040](https://github.com/user-attachments/assets/1d543531-6608-4511-9d5e-b0a81f5685e1)
-![Captura de pantalla 2025-01-12 223951](https://github.com/user-attachments/assets/c3fe7b8a-9fc6-4f08-b971-b0424c91fd2b)
-
-*Podemos crear visualizaciones para ver el numero de viajes en funcion de la hora
-```{r}
-# Extraer la hora del día
-datos_completos$hora <- hour(datos_completos$start_time)
-
-# Agrupar por hora y tipo de usuario, y contar el número de viajes
-resumen_data <- datos_completos %>%
-  group_by(hora, usertype) %>%
-  summarise(num_viajes = n_distinct(trip_id)) # Contamos los viajes únicos por hora
-
-ggplot(resumen_data, aes(x = hora, y = num_viajes, color = usertype)) +
-  geom_line(size = 1) +  # Línea para cada tipo de usuario
-  labs(title = "Número de viajes según la hora del día",
-       x = "Hora del día",
-       y = "Número de viajes",
-       color = "Tipo de usuario") +
-  theme_minimal() +  # Estilo limpio
-  scale_x_continuous(breaks = 0:23, 
-                     labels = paste0(sprintf("%02d", 0:23), ":00")) +  # Formato HH:00
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar las etiquetas del eje X
-```
-![Captura de pantalla 2025-01-13 024211](https://github.com/user-attachments/assets/38d8654e-c0ed-41a4-a80e-240a4eb0d02a)
-
-* Podemos ver el número de viajes por dia semanal
-```{r}
-# Convertir los números del 1 al 7 a los nombres de los días de la semana
-datos_completos$day_of_week <- factor(datos_completos$day_of_week,
-                                      levels = 1:7,
-                                      labels = c("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"))
-
-# Agrupar por día de la semana y tipo de usuario, y contar el número de viajes
-resumen_dia_semana <- datos_completos %>%
-  group_by(day_of_week, usertype) %>%
-  summarise(num_viajes = n_distinct(trip_id))  # Contamos los viajes únicos por día
-
-# Crear la gráfica de barras
-ggplot(resumen_dia_semana, aes(x = day_of_week, y = num_viajes, fill = usertype)) +
-  geom_bar(stat = "identity", position = "dodge") +  # Barras por cada tipo de usuario
-  labs(title = "Número de viajes según el día de la semana",
-       x = "Día de la semana",
-       y = "Número de viajes",
-       fill = "Tipo de usuario") +
-  theme_minimal() +  # Estilo limpio
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje X
-```
-![Captura de pantalla 2025-01-13 024609](https://github.com/user-attachments/assets/862c2576-76cf-4cbb-997d-66a637c432f8)
-
-*Podemos ver el numero de viajes por mes
-```{r}
-# Convertir los números del 1 al 12 a los nombres de los meses
-datos_completos$month <- factor(datos_completos$month,
-                                levels = 1:12,
-                                labels = c("enero", "febrero", "marzo", "abril", "mayo", "junio", 
-                                           "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"))
-
-# Agrupar por mes y tipo de usuario, y contar el número de viajes
-resumen_mes <- datos_completos %>%
-  group_by(month, usertype) %>%
-  summarise(num_viajes = n_distinct(trip_id))  # Contamos los viajes únicos por mes
-
-# Crear la gráfica de barras
-ggplot(resumen_mes, aes(x = month, y = num_viajes, fill = usertype)) +
-  geom_bar(stat = "identity", position = "dodge") +  # Barras por cada tipo de usuario
-  labs(title = "Número de viajes según el mes del año",
-       x = "Mes",
-       y = "Número de viajes",
-       fill = "Tipo de usuario") +
-  theme_minimal() +  # Estilo limpio
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje X
-```
-
-![Captura de pantalla 2025-01-13 025027](https://github.com/user-attachments/assets/2f3c4ebf-f5c0-4d1e-b23a-23a6ade47346)
 
 
 
