@@ -88,7 +88,7 @@ I need to identify key differences between the two user groups that can help det
 
 ## DATA VISUALIZATIONS
 
-[Visualizations in R](analysis_report.pdf)
+[Visualizations in R](Analysis_report.pdf)
 
 ## RECOMENDATIONS
 
