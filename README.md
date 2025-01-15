@@ -53,6 +53,33 @@ I need to identify key differences between the two user groups that can help det
 
 ## Data Analysis in R
 
+1. Statistical summary of the ride_length column.
+2. Count the number of trips for each user.
+3. Analize the duration of the trip depending on the type of user.
+4. Analize the duration of the trip depending on the day of the week and the type of user.
+5. Analize the duration of the trip and the number of trips according to the type of user and the day of the week.
+6. Analize the duration of the trip and the number of trips according to the type of user and the month.
+
+**Findings:**
+
+**Casual users:**
+
+* They take fewer trips overall than members.
+* They make more trips on weekends and during the summer, and tend to make more trips in the afternoon.
+* They take longer trips in general, twice as long. 
+* Their trips are longer during the day, on weekends, and in the spring-summer seasons.
+* This suggests recreational use of bicycles, probably students and retirees.
+
+**Member users:**
+
+* They make more trips in general than casual users.
+* They make more trips during the week, in summer, and the times at which they make the most trips are 8AM and 6PM.
+* They take shorter trips, approximately half as long as casual users.
+* Their trips are almost always of the same duration, somewhat less overnight. 
+* They do not vary their duration significantly between the different seasons, but they make slightly longer trips on weekends.
+* This suggests that they are users who use bikes to go to work, whether during the day shift or the night shift, which is why the times they make the most trips coincide with the opening and closing hours of businesses.
+
+## Data visualizations in R
 
 
 
