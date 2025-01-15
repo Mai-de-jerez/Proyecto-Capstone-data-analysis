@@ -88,8 +88,9 @@ I need to identify key differences between the two user groups that can help det
 
 ## DATA VISUALIZATIONS
 
+[Ver documento PDF](documento.pdf)
 
-### RECOMENDATIONS
+## RECOMENDATIONS
 
 * Offer a type of membership to casual users called 'free time' that allows them to use the bikes during the afternoon, from 4PM to 10PM for example, on weekends all day, and unlimited access during the day in the summer months.
 
