@@ -1,0 +1,399 @@
+---
+title: "Analysis report"
+author: "María del Carmen Martín Rodríguez"
+date: "2025-01-13"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, collapse = TRUE)
+options(width = 80)
+
+```
+
+## BUSINESS TASK
+
+I must answer this question with my analysis to know what I can offer casual bike share users to make them want to become members of Cyclistic.
+How are annual members and casual riders different when it comes to using Cyclistic bikes?
+
+### DATA SOURCE 
+
+* Data was collected from: https://divvy-tripdata.s3.amazonaws.com/index.html
+* Under this license: https://divvybikes.com/data-license-agreement
+
+#### Install required packages for creating my enviroment en R:
+
+* tidyverse for data import and wrangling
+* dplyr for data manipulation
+* ggplot for visualization
+* lubridate for date functions
+ 
+
+```{r loading packages, message=TRUE, warning=FALSE}
+library(tidyverse)  #helps wrangle data
+library(lubridate)  #helps wrangle date attributes
+library(ggplot2)  #helps visualize data
+library(dplyr) # helps Data Manipulation
+```
+### DATA COLLECTION
+
+```{r message=FALSE}
+setwd("/Users/carme/Desktop/Datos_divvy/CSV") #sets your working directory to simplify calls to data ... make sure to use your OWN username instead of mine ;)
+# Upload Divvy datasets (csv files) here
+jan <- read_csv("202401-divvy-tripdata.csv")
+feb <- read_csv("202402-divvy-tripdata.csv")
+mar <- read_csv("202403-divvy-tripdata.csv")
+apr <- read_csv("202404-divvy-tripdata.csv")
+may <- read_csv("202405-divvy-tripdata.csv")
+jun <- read_csv("202406-divvy-tripdata.csv")
+jul <- read_csv("202407-divvy-tripdata.csv")
+aug <- read_csv("202408-divvy-tripdata.csv")
+sep <- read_csv("202409-divvy-tripdata.csv")
+oct <- read_csv("202410-divvy-tripdata.csv")
+nov <- read_csv("202411-divvy-tripdata.csv")
+dec <- read_csv("202412-divvy-tripdata.csv")
+
+```
+
+Stack individual data frames into one big data frame:
+
+```{r}
+all_trips <- bind_rows(jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec)
+
+```
+
+Inspect the new table that has been created:
+
+```{r}
+colnames(all_trips)  #List of column names
+nrow(all_trips)  #How many rows are in data frame?
+dim(all_trips)  #Dimensions of the data frame?
+head(all_trips)  #See the first 6 rows of data frame.  Also tail(all_trips)
+str(all_trips)  #See list of columns and data types (numeric, character, etc)
+summary(all_trips)  #Statistical summary of data. Mainly for numerics
+```
+
+### DATA WRANGLING
+
+Remove fields with location coordinates because they are irrelevant:
+
+```{r}
+all_trips <- all_trips %>%  
+  select(-c(start_lat, start_lng, end_lat, end_lng))
+```
+
+Add columns that list the date, month, day, and year of each ride. This will allow us to aggregate ride data for each month, day, or year ... before completing these operations we could only aggregate at the ride level:
+
+```{r}
+all_trips$date <- as.Date(all_trips$started_at) #The default format is yyyy-mm-dd
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+```
+
+Add a "ride_length" calculation to all_trips (in seconds):
+
+```{r}
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+```
+
+Inspect the structure of the columns:
+
+```{r}
+str(all_trips)
+```
+
+Convert "ride_length" from Factor to numeric so we can run calculations on the data:
+
+```{r}
+is.factor(all_trips$ride_length)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+is.numeric(all_trips$ride_length)
+```
+
+Check that there are no duplicate rows:
+
+```{r}
+all_trips <- unique(all_trips)
+```
+
+We will delete "bad" data. The data frame includes a few hundred entries where the walk time was a negative value or less than 60 seconds. 
+We will create a new version of the data frame (v2) since data is being removed:
+
+```{r}
+all_trips_v2 <- all_trips %>%
+  filter(!is.na(ride_length) & ride_length >= 60)
+```
+
+Let's make the month column more coherent:
+
+```{r}
+all_trips_v2 <- all_trips_v2 %>%
+  mutate(month = recode(month, 
+                       "01" = "enero", 
+                       "02" = "febrero", 
+                       "03" = "marzo", 
+                       "04" = "abril", 
+                       "05" = "mayo", 
+                       "06" = "junio", 
+                       "07" = "julio", 
+                       "08" = "agosto", 
+                       "09" = "septiembre", 
+                       "10" = "octubre", 
+                       "11" = "noviembre", 
+                       "12" = "diciembre"))
+
+```
+
+### DATA ANALYSIS
+
+Descriptive analysis on ride_length (all figures in seconds):
+
+```{r}
+summary(all_trips_v2$ride_length)
+```
+
+We can see that the average duration of the trips is 1062.3 seconds, and that trips lasting less than 60 seconds were effectively eliminated.
+
+Let's count the number of trips for each user:
+
+```{r}
+all_trips_v2 %>%
+  group_by(member_casual) %>%
+  summarise(number_of_rides = n()) %>%
+  print()
+```
+We can see that members take more trips than casual users.
+
+Compare members and casual users:
+
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = min)
+```
+We can see that casuals spend twice as much time as members on their trips.
+
+
+See the average travel time each day for members and casual users, but let's order the days of the week:
+
+```{r}
+all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"))
+```
+
+Now, let's run the average ride time by each day for members vs casual users:
+
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+
+```
+Both users take longer trips on weekends, especially casual ones.
+
+Analyze ridership data by type and weekday:
+
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  
+  group_by(member_casual, weekday) %>%
+  summarise(number_of_rides = n(),average_duration = mean(ride_length)) %>%					
+  arrange(member_casual, weekday)							
+```
+
+From this summary we can extract that members make more trips during the week, and casual members make more trips on weekends.
+
+Let's see what happens with the number of trips and their duration monthly:
+
+```{r}
+all_trips_v2 %>%
+  group_by(member_casual, month) %>%  
+  summarise(
+    number_of_rides = n(),  
+    average_duration = mean(ride_length, na.rm = TRUE)
+  ) %>%
+  mutate(
+    month = factor(month, levels = c("enero", "febrero", "marzo", "abril", "mayo", "junio", 
+                                     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"))
+  ) %>%
+  arrange(member_casual, month)
+```
+
+Members and casuals make more trips in summer and less in winter. 
+Casual travelers also make shorter trips during the winter.
+
+## DATA VISUALIZATIONS
+
+Let's visualize the number of rides by rider type:
+
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n() ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) + 
+  geom_col(position = "dodge")
+```
+We can see that members make more trips than casual users, and we can see that indeed members make fewer trips on weekends, and casual members make more trips on weekends.
+
+```{r}
+all_trips_v2 %>%
+  mutate(month = factor(month, levels = c("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"))) %>%
+  group_by(member_casual, month) %>%
+  summarise(number_of_rides = n(), 
+            average_duration = mean(ride_length, na.rm = TRUE)) %>% 
+  arrange(member_casual, month) %>%
+  ggplot(aes(x = month, y = number_of_rides, fill = member_casual)) + 
+  geom_col(position = "dodge") +
+  labs(x = "Month", y = "Number of rides", title = "Number of rides per month") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+Here we can clearly see that both groups make more trips in summer and less trips in winter.
+
+Let me show how the time of day affects the number of trips:
+
+```{r}
+all_trips_v2 %>%
+  mutate(hour_of_day = hour(started_at)) %>%
+  group_by(member_casual, hour_of_day) %>%
+  summarise(number_of_rides = n(), 
+            average_duration = mean(ride_length, na.rm = TRUE)) %>%
+  arrange(member_casual, hour_of_day) %>%
+  ggplot(aes(x = hour_of_day, y = number_of_rides, color = member_casual, group = member_casual)) + 
+  geom_line(size = 1) +  # Cambia geom_col por geom_line
+  scale_x_continuous(breaks = 0:23, 
+                     labels = function(x) {
+                       hour_labels <- ifelse(x %% 12 == 0, "12 AM", 
+                                             ifelse(x < 12, paste0(x, " AM"), 
+                                                    paste0(x - 12, " PM")))
+                       return(hour_labels)
+                     }) +
+  labs(x = "Time of day", y = "Number of rides", title = "Number of rides per time of day") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+We can see that members take their bike more in the morning and afternoon, right at the time when businesses open and close, then they use the bike to go to or from work, the casual ones, for their part, concentrate their trips in the morning. afternoon, then they are probably students who take the bike in the afternoon as a leisure activity.
+
+Let's create a visualization for average duration:
+
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n() ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+We can notice that both groups make longer trips on weekends, but the casual ones significantly increase the duration of the trip. Casual people take longer trips in general.
+
+Let's see what happens monthly with the duration of the trips:
+
+```{r}
+all_trips_v2 %>%
+  mutate(month = factor(month, levels = c("enero", "febrero", "marzo", "abril", "mayo", "junio", 
+                                         "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"))) %>%
+  group_by(member_casual, month) %>%
+  summarise(number_of_rides = n(), 
+            average_duration = mean(ride_length, na.rm = TRUE)) %>% 
+  arrange(member_casual, month) %>% 
+  ggplot(aes(x = month, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Annually, casuals continue to make longer trips but a little shorter in the winter months.
+Members take shorter trips overall, and trip lengths don't vary as much between seasons.
+
+
+Let's see what happens with the time of day and the duration of the trip:
+
+```{r}
+all_trips_v2 %>%
+  mutate(hour_of_day = hour(started_at)) %>%
+  group_by(member_casual, hour_of_day) %>%
+  summarise(number_of_rides = n(), 
+            average_duration = mean(ride_length, na.rm = TRUE)) %>%
+  arrange(member_casual, hour_of_day) %>%
+  ggplot(aes(x = hour_of_day, y = average_duration, color = member_casual, group = member_casual)) + 
+  geom_line(size = 1) +  # Cambio a gráfico de líneas
+  scale_x_continuous(breaks = 0:23, 
+                     labels = function(x) {
+                       hour_labels <- ifelse(x %% 12 == 0, "12 AM", 
+                                             ifelse(x < 12, paste0(x, " AM"), 
+                                                    paste0(x - 12, " PM")))
+                       return(hour_labels)
+                     }) +
+  labs(x = "Time of day", y = "Average duration (sec)", title = "Average trip duration Vs Time of day") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+We can see that members make the same type of trip during the day as at night (some at night a little shorter), because the use they make is to go to work (whether day or night shift).
+Casual people do not make long trips at night, since their use of bikes is more recreational.
+
+
+Let's try to visualize the type of bicycle used by each type of user:
+
+```{r}
+all_trips_v2 %>%
+  filter(member_casual == "casual") %>%
+  count(rideable_type) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1)) %>%
+  ggplot(aes(x = "", y = n, fill = rideable_type)) +  
+  geom_bar(stat = "identity", width = 1) +        
+  coord_polar(theta = "y") +                   
+  labs(title = "Casual users") +  theme_void() +                              
+  theme(axis.text.x = element_blank()) +       
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), color = "white")
+```
+
+
+```{r}
+all_trips_v2 %>%
+  filter(member_casual == "member") %>%
+  count(rideable_type) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1)) %>%
+  ggplot(aes(x = "", y = n, fill = rideable_type)) +  
+  geom_bar(stat = "identity", width = 1) +        
+  coord_polar(theta = "y") +                   
+  labs(title = "Member users") +
+  theme_void() +                              
+  theme(axis.text.x = element_blank()) +       
+  geom_text(aes(label = paste0(percentage, "%")), 
+            position = position_stack(vjust = 0.5), color = "white")
+
+```
+Electric bikes are the favorites of both types of users, so it doesn't seem relevant to the case.
+
+### CONCLUSIONS
+
+**Casual users:**
+
+* They take fewer trips overall than members.
+* They make more trips on weekends and during the summer, and tend to make more trips in the afternoon.
+* They take longer trips in general, twice as long. 
+* Their trips are longer during the day, on weekends, and in the spring-summer seasons.
+* This suggests recreational use of bicycles, probably students and retirees.
+
+**Member users:**
+
+* They make more trips in general than casual users.
+* They make more trips during the week, in summer, and the times at which they make the most trips are 8AM and 6PM.
+* They take shorter trips, approximately half as long as casual users.
+* Their trips are almost always of the same duration, somewhat less overnight. 
+* They do not vary their duration significantly between the different seasons, but they make slightly longer trips on weekends.
+* This suggests that they are users who use bikes to go to work, whether during the day shift or the night shift, which is why the times they make the most trips coincide with the opening and closing hours of businesses.
+
+### RECOMENDATIONS
+
+* Offer a type of membership to casual users called 'free time' that allows them to use the bikes during the afternoon, from 4PM to 10PM for example, on weekends all day, and unlimited access during the day in the summer months.
+
+* Create a marketing campaign focused on these benefits, clear messages about the hours and days that users can enjoy their membership, and how this will allow them to have a more flexible experience that fits their lives, across networks social events, advertising messages at bus stops (to raise awareness about the importance of the environment), and advertising messages near secondary schools, universities, and nursing homes.
+
+* One of the key strategies for converting casual cyclists into annual Cyclistic members is to leverage the existing network of users. A referral system would incentivize current users to refer their friends and family to join the annual membership program. This marketing strategy can leverage the trust and personal relationships of current riders to attract new members. Every time a referral signs up for an annual membership, both the current user and the new member would receive a reward, such as a month of Free membership or a discount on future renewals. This type of incentive would motivate members to share the program with others.
+
+
+
+
+
