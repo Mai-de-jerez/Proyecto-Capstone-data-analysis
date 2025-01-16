@@ -86,9 +86,9 @@ I need to identify key differences between the two user groups that can help det
 * They do not vary their duration significantly between the different seasons, but they make slightly longer trips on weekends.
 * This suggests that they are users who use bikes to go to work, whether during the day shift or the night shift, which is why the times they make the most trips coincide with the opening and closing hours of businesses.
 
-## DATA VISUALIZATIONS
+## DATA VISUALIZATIONS with TABLEAU
 
-[Visualizations in R](Analysis_report.pdf)
+[View my Dashboard in Tableau Public](https://public.tableau.com/app/profile/mar.a.del.carmen.mart.n.rodr.guez/viz/Cyclisticproject_17369912676980/Dashboard1)
 
 ## RECOMENDATIONS
 
