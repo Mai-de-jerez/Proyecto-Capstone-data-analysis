@@ -10,7 +10,7 @@ Welcome to the Cyclistic shared bike analysis case study. In this case study, I 
 * Share.
 * Act.
 
-<img src="bici.webp" alt="foto" width="800">
+<img src="bici.webp" alt="foto" width="1000">
 
   
 ## SCENARIO
